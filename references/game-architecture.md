@@ -41,10 +41,26 @@ const { gamePhase, players, setGamePhase } = useGameStore();
 The `gamePhase` string drives which view renders in `App.jsx`:
 
 ```
-splash → roster_select → confirmation → vip_reveal/vip_roulette
-  → tournament_overview → map_select → vs_screen → battle → victory
-  → (back to tournament_overview for next match, or reset)
+splash ──→ rules (optional, via RULES button)
+  │
+  ├──→ roster_select ──→ confirmation ──→ vip_reveal ──→ vip_roulette (if wildcards)
+  │                                                           │
+  │                                              tournament_overview ◄──────────┐
+  │                                                     │                       │
+  │                                              map_select (or auto-villa)     │
+  │                                                     │                       │
+  │                                               vs_screen                     │
+  │                                                     │                       │
+  │                                                 battle                      │
+  │                                                     │                       │
+  │                                                victory ─────────────────────┘
+  │
+  │  (After all matches complete)
+  │
+  └──→ tournament_overview (REVEAL CHAMPION) ──→ victory (SIKE sequence)
 ```
+
+**Phase values**: `'splash' | 'rules' | 'roster_select' | 'confirmation' | 'vip_reveal' | 'vip_roulette' | 'tournament_overview' | 'map_select' | 'vs_screen' | 'battle' | 'victory'`
 
 **App.jsx routing pattern:**
 ```jsx
@@ -84,15 +100,32 @@ const BRACKET_CONFIG = {
 3. Resolve VIP placeholders immediately
 4. Load first round into `pendingMatches`
 
+**Player IDs**: Players have **numeric IDs** (1-11), not character string IDs. Character IDs (e.g. `'alexander'`) are stored in `player.chosenCharacter`. All bracket logic uses numeric IDs.
+
 **Placeholder system** — this is critical to understand:
 - `W_Prelims_0` = "winner of prelim match 0"
 - `WC_0` = "wildcard slot 0"
 - `VIP_0` = "VIP player slot 0"
 - `W_QF_0` = "winner of QF match 0"
 
+Helpers: `isPlaceholder(id)` → `typeof id === 'string'`; `isResolved(m)` → both p1Id and p2Id are numbers.
+
 These get resolved to real player IDs by `replacePlaceholder()` as matches complete. When a match finishes, `advanceTournament()` replaces the winner's placeholder in subsequent rounds.
 
+**`executeWildcards(revealedIds)`** — Accepts exact player IDs from the roulette UI. Does NOT re-shuffle internally (this was a desync bug fix). The roulette animation determines which players come back, and those exact IDs are passed to the store.
+
 **Round order:** `['Prelims', 'QF', 'SF', 'Final']`
+
+### Bracket Testing Checklist
+
+After any bracket changes, verify these scenarios:
+- [ ] Size 2: Direct final, no prelims
+- [ ] Size 4: QF → SF → Final
+- [ ] Size 8: QF → SF → Final (no prelims)
+- [ ] Size 11: Prelims → Wildcards → QF → SF → Final
+- [ ] Alexander is always VIP (first bye)
+- [ ] Wildcard roulette uses exact IDs from UI
+- [ ] Placeholder resolution cascades correctly
 
 ---
 

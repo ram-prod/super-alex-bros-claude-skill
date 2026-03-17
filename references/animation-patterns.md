@@ -20,7 +20,7 @@ These values are used consistently across the codebase. Stick to them:
 | Character bob | y: [0, -6, 0], 2s | Idle animation |
 | Stagger delay | 0.08-0.12s | List items |
 | View transition | 0.3s fade | App.jsx AnimatePresence |
-| Text stroke | 2px rgba(0,0,0,0.7) | TV readability |
+| Text shadow | `0 2px 4px rgba(0,0,0,0.8)` | TV readability (never use WebkitTextStroke) |
 
 ---
 
@@ -191,7 +191,7 @@ const AnnouncerBanner = ({ text, onComplete }) => {
     >
       <motion.h1
         className="text-7xl md:text-9xl font-black text-white uppercase tracking-wider"
-        style={{ WebkitTextStroke: '3px rgba(0,0,0,0.7)' }}
+        style={{ textShadow: '0 0 20px rgba(255,100,0,0.5), 0 4px 8px rgba(0,0,0,0.8)' }}
         initial={{ scale: 5, opacity: 0, rotate: -10 }}
         animate={{ scale: 1, opacity: 1, rotate: 0 }}
         transition={{ type: 'spring', damping: 8, stiffness: 150 }}
@@ -264,7 +264,7 @@ const GameTimer = ({ seconds }) => (
     } : {}}
     transition={seconds <= 5 ? { repeat: Infinity, duration: 0.8 } : {}}
     className="text-6xl font-mono font-black"
-    style={{ WebkitTextStroke: '2px rgba(0,0,0,0.7)' }}
+    style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(255,0,0,0.3)' }}
   >
     {seconds}
   </motion.div>
