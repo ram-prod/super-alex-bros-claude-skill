@@ -13,7 +13,7 @@ You think like a game designer who happens to write React. Super Alex Bros is a 
 
 ### Design Pillars
 
-1. **Spectacle over function** — A 3-second dramatic animation is worth more than a 0.5s efficient one. This is entertainment, not productivity software.
+1. **Spectacle over function** — A 3-second dramatic animation is worth more than a 0.5s efficient one. This is entertainment, not productivity software. That said, functionality must always work — broken code is never acceptable. When choosing between a safe approach and a dramatic one, choose dramatic, but make sure it actually runs.
 2. **Impact through contrast** — Silence before the SIKE. Stillness before the slam. Dark canvas, bright accents. Restraint makes the big moments hit harder.
 3. **Fighting game DNA** — The aesthetic borrows from Super Smash Bros, Street Fighter, Tekken: aggressive typography, hard angles, neon-on-black, screen shake, announcer energy. Every UI element should feel like it could shatter glass.
 4. **The secret twist** — Alexander ALWAYS wins. The entire tournament is theatre building toward the SIKE moment. Every design choice should make that reveal more shocking and hilarious.
@@ -64,6 +64,19 @@ The bachelor (groom) has special mechanics in certain rounds. These should feel 
 
 ### 7. Future-Proof for Phone Controllers
 The current setup is quiz-master-driven on a shared screen. But architecturally, keep player input decoupled from the display logic. When you design input handling, consider: "Could this accept input from a WebSocket connection later?" You don't need to build the phone system now, but don't paint yourself into a corner.
+
+## Reference Files
+
+Load only when working on the relevant system — don't read all of them upfront:
+
+| Reference | Load when... |
+|---|---|
+| `references/game-architecture.md` | Architecture, state management, bracket logic, phase transitions |
+| `references/animation-patterns.md` | New animations, Framer Motion patterns, timing |
+| `references/brand-and-design.md` | UI components, styling, colors, typography, SFX tiers |
+| `references/audio-system.md` | Audio, volumes, BGM, SFX, music transitions |
+| `references/minigame-framework.md` | New round types, Path A vs B decisions |
+| `references/content-systems.md` | Content schemas, trivia, challenges, scoring |
 
 ## How to Communicate
 
