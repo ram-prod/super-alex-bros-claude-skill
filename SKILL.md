@@ -27,10 +27,12 @@ Animations aren't cosmetic — they ARE the game experience. A round transition 
 
 Check `references/animation-patterns.md` for Framer Motion recipes tailored to this project.
 
-### 3. The Round System is Sacred
-The game flows through rounds — combat, trivia, challenges, minigames. Every new piece of content must plug into this system cleanly. Don't create one-off flows; extend the framework.
+### 3. Trivia IS the Battle — Understand the Game Loop
+Trivia questions and challenges are the **core battle mechanic**. During 1v1 matches in BattleView, a question appears, players compete, and the quiz master awards damage to the loser. This IS the game loop — do NOT create standalone trivia phases that duplicate this.
 
-Check `references/minigame-framework.md` for how to add new round types.
+**New content types** (multiple choice, categories, vote, etc.) should be added to `gamedata.json` and rendered inside BattleView (Path A). Only create **standalone phases** (Path B) for activities where ALL players participate simultaneously — group drinking games, challenge wheels, collective moments.
+
+Check `references/minigame-framework.md` for the distinction between Path A and Path B.
 
 ### 4. Content Framework Over Content
 Build the structures, templates, and JSON schemas for content. Provide clear examples and placeholder entries. The user fills in the actual bachelor-specific trivia, embarrassing questions, and personal challenges.
@@ -66,7 +68,9 @@ Follow this sequence:
 2. **Design** — Sketch the approach: what components, what state, what animations
 3. **Build the skeleton** — Get the basic functionality working with minimal animation
 4. **Add game feel** — Layer in transitions, effects, sound hooks, and polish
-5. **Test the flow** — Consider how this fits in the full game flow, how quiz masters navigate to/from it
+5. **Verify the build** — Run `pnpm build` to catch compile errors before testing
+6. **Test visually** — If preview tools are available, start the dev server, take screenshots, and verify the result looks correct on screen. Check for: text rendering artifacts, animation smoothness, responsive layout, button interactions
+7. **Test the flow** — Consider how this fits in the full game flow, how quiz masters navigate to/from it
 
 ## Project-Specific Patterns
 
@@ -174,6 +178,37 @@ The project already uses these Framer Motion patterns consistently:
 - **Projectile arc** (🍺 with y: [0, -250, 0] parabola + rotation)
 - **Particle explosion** (12 particles, random offsets, gravity simulation)
 - **Staggered list entries** (0.08-0.12s per item)
-- **Text stroke** for TV readability (WebkitTextStroke: '2px rgba(0,0,0,0.7)')
 
 Match these patterns when adding new animations. Don't introduce competing animation libraries or conflicting spring constants.
+
+### Critical Framer Motion Rules
+
+These rules prevent bugs that are difficult to debug visually:
+
+1. **`animate={}` for transitions, never `style={}`** — If a value should animate smoothly between states (rotation, position, scale), it MUST go in `animate={{ rotate: value }}`, not `style={{ rotate: value }}`. The `style` prop sets values instantly, bypassing the animation system entirely.
+
+2. **Never mix `whileHover`/`whileTap` with inline CSS `transform`** — If an element has `style={{ transform: 'skewX(-10deg)' }}`, do NOT also add `whileHover={{ scale: 1.05 }}`. The two transform systems fight each other, causing animations to freeze mid-transition. Use either Framer Motion for all transforms (`animate={{ skewX: -10 }}` + `whileHover={{ scale: 1.05 }}`), or CSS for everything.
+
+3. **All hover/tap animations must return to base** — If you use `whileHover`, the animation must cleanly reverse when the mouse leaves, even if the leave happens during the animation. Test rapid hover on/off.
+
+### Text Rendering Rules
+
+Large display text (titles, banners, announcer screens) is shown on TVs/projectors where rendering artifacts are highly visible:
+
+1. **Never use `WebkitTextStroke` on large text** — It creates visible diagonal slash artifacts where letter path segments join. The heavier the stroke and larger the font, the worse the artifacts.
+
+2. **Use these alternatives instead:**
+   - `filter: 'drop-shadow(0 2px 0 rgba(0,0,0,0.8))'` for depth
+   - Multiple `text-shadow` values for glow effects: `textShadow: '0 0 20px rgba(255,100,0,0.5), 0 2px 4px rgba(0,0,0,0.8)'`
+   - Gradient text via `bg-clip-text text-transparent bg-gradient-to-r` (Tailwind)
+
+3. **Use CSS fonts, not generated/drawn text** — Always render text as HTML text elements styled with CSS. Never draw text as images or SVG paths.
+
+### Responsive Design
+
+The game runs on screens from laptops to TVs. All views must adapt:
+
+1. **Use relative sizing** — `max-w-2xl`, `vh` units, percentage-based layouts. Avoid fixed pixel widths that overflow on smaller screens.
+2. **Test at multiple sizes** — Content must not overflow or get cut off at the bottom. Use `min-h-screen` with `overflow-hidden` and `flex` to center content vertically.
+3. **Touch-friendly** — Buttons must be at least 48x48px touch targets, preferably larger for party conditions.
+4. **Font scaling** — Use responsive Tailwind classes: `text-2xl sm:text-3xl md:text-5xl` for titles.
