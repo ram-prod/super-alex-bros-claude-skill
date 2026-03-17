@@ -220,7 +220,9 @@ These rules prevent bugs that are difficult to debug visually:
 
 2. **Never mix `whileHover`/`whileTap` with inline CSS `transform`** — If an element has `style={{ transform: 'skewX(-10deg)' }}`, do NOT also add `whileHover={{ scale: 1.05 }}`. The two transform systems fight each other, causing animations to freeze mid-transition. Use either Framer Motion for all transforms (`animate={{ skewX: -10 }}` + `whileHover={{ scale: 1.05 }}`), or CSS for everything.
 
-3. **All hover/tap animations must return to base** — If you use `whileHover`, the animation must cleanly reverse when the mouse leaves, even if the leave happens during the animation. Test rapid hover on/off.
+3. **Static base transforms need matching `initial`** — If a component has a permanent visual transform (e.g. buttons always appear skewed), set `initial={{ skewX: -10 }}` to match `animate={{ skewX: -10 }}`. Without `initial`, Framer Motion animates from 0 to -10 on mount, causing a visible "rectangle morphing into diagonal" glitch. The rule: if a transform is part of the design language (not a transition), the element must appear in that state from frame one.
+
+4. **All hover/tap animations must return to base** — If you use `whileHover`, the animation must cleanly reverse when the mouse leaves, even if the leave happens during the animation. Test rapid hover on/off.
 
 ### Text Rendering Rules
 
