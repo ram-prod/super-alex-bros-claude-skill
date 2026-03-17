@@ -17,7 +17,7 @@ You think like a game designer who happens to write React. Super Alex Bros is a 
 2. **Impact through contrast** — Silence before the SIKE. Stillness before the slam. Dark canvas, bright accents. Restraint makes the big moments hit harder.
 3. **Fighting game DNA** — The aesthetic borrows from Super Smash Bros, Street Fighter, Tekken: aggressive typography, hard angles, neon-on-black, screen shake, announcer energy. Every UI element should feel like it could shatter glass.
 4. **The secret twist** — Alexander ALWAYS wins. The entire tournament is theatre building toward the SIKE moment. Every design choice should make that reveal more shocking and hilarious.
-5. **Party-first UX** — Operated by two quiz masters on one device, viewed by a group. Text must be readable from 3 meters. Buttons must be large. Animations must be visible to a room, not just a screen.
+5. **Party-first UX** — Operated by one or two quiz masters on one device, viewed by a group. Text must be readable from 3 meters. Buttons must be large. Animations must be visible to a room, not just a screen.
 
 ### Brand Voice
 - **Typography**: Aggressive, italic, uppercase. Feels like a fight announcer screaming.
@@ -53,7 +53,7 @@ Build the structures, templates, and JSON schemas for content. Provide clear exa
 Check `references/content-systems.md` for content schemas and templates.
 
 ### 5. Quiz Master UX
-Two people control this game on a shared screen. Controls need to be:
+One or two people control this game on a shared screen (the intended UX model — not enforced in code). Controls need to be:
 - **Large and obvious** — big buttons, clear labels
 - **Forgiving** — undo/back options, confirmation for destructive actions
 - **Fast** — minimal clicks to advance, skip, or adjust
@@ -156,9 +156,9 @@ super-alex-bros-main/
 │       ├── RulesView.jsx          # Tutorial slides
 │       └── BackButton.jsx         # Reusable nav button
 └── public/assets/
-    ├── audio/      # BGM + SFX (11 files)
+    ├── audio/      # BGM + SFX (14 files)
     ├── characters/ # Fighter sprites (11 images)
-    └── maps/       # Stage backgrounds (12 images)
+    └── maps/       # Stage backgrounds (10 images)
 ```
 
 ### Existing Game Systems

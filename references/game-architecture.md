@@ -72,11 +72,27 @@ switch (gamePhase) {
 }
 ```
 
+**`goBack()` routing** (BackButton navigates backward):
+| From | Goes to | Notes |
+|---|---|---|
+| `map_select` | `tournament_overview` | |
+| `confirmation` | `roster_select` | |
+| `vip_reveal` / `vip_roulette` | `confirmation` | |
+| `tournament_overview` | `roster_select` | Resets bracket state |
+| `roster_select` | `splash` | |
+| `battle` / `victory` | — | BackButton hidden |
+
+**Persistence exclusions** — these fields reset on page refresh (excluded from `partialize`):
+- `bgmState` — audio should not auto-resume
+- `isMusicPlaying` — same reason
+- `hasSeenIntro` — intro animations replay on refresh
+
 **To add a new phase:**
 1. Add the phase string to the flow in `useGameStore.js`
 2. Create a `{Phase}View.jsx` component in `src/components/`
 3. Add the case to the switch in `App.jsx`
-4. Set appropriate BGM track if needed
+4. Add `goBack()` routing for the new phase
+5. Set appropriate BGM track if needed
 
 ---
 
@@ -88,7 +104,7 @@ This is the most complex system in the game. Understand it before modifying anyt
 ```js
 const BRACKET_CONFIG = {
   2:  { base: 'Final', prelims: 0, byes: 0, wildcards: 0 },
-  3:  { base: 'SF', prelims: 1, byes: 1, wildcards: 0 },
+  3:  { base: 'Final', prelims: 1, byes: 1, wildcards: 0 },
   // ... up to 11 players
   11: { base: 'QF', prelims: 5, byes: 1, wildcards: 2 },
 };
@@ -172,20 +188,21 @@ intro_arena → intro_p1 → intro_p2 → intro_fight → idle_question
 
 Managed in the Zustand store + `App.jsx` (where the `<audio>` element lives).
 
-**BGM tracks** (in `public/assets/audio/`):
-- `theme` — splash/menu
-- `ready_to_start` — confirmation screen
-- `regular_game` — normal matches
-- `final_game` — final match
-- `vs_screen` — VS screen
+**BGM tracks** (looping, managed via `setBgmState()` + `setCurrentTrack()`):
+- `theme` — splash/menu/tournament overview
+- `regular_game` — standard battles
+- `final_game` — Grand Final
 
-**SFX** (played via `playSFX()`):
-- `click`, `click_epic`, `click_special` — UI feedback
+**SFX** (one-shot, played via `playSFX()`):
+- `click`, `click_epic`, `click_special` — UI feedback (3-tier system)
+- `ready_to_start` — PRESS START / confirmation screen
+- `vs_screen` — VS screen entrance
+- `select` — character selection confirm
+- `announcer_roster` — roster view mount
 - `first_blood` — first damage in a match
 - `ko_jingle` — KO moment
 - `smash` — hit impact
 - `sike` — SIKE reveal
-- `select`, `announcer_roster` — character select
 
 **Pattern:** Views call `setCurrentTrack('track_name')` and `setBgmState('playing')` to change music. SFX via `playSFX('sfx_name')`.
 

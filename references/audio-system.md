@@ -78,6 +78,9 @@ Track switching via `setBgmState('playing', trackName)`.
 | `ko_jingle` | 1.0 | 200% KO hit |
 | `sike` | 0.7 | SIKE moment (simultaneous with smash) |
 | `smash` | 1.0 | SIKE moment (simultaneous with sike) |
+| `select` | 1.0 | Character selection confirm |
+| `vs_screen` | 1.0 | VS screen entrance SFX |
+| `ready_to_start` | 1.0 | Confirmation/ready screen SFX |
 
 ---
 
